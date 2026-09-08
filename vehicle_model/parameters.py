@@ -1,26 +1,37 @@
 from dataclasses import dataclass
-from typing import Optional
+import math
 
 
 @dataclass(frozen=True)
 class VehicleParameters:
-    """Longitudinal vehicle parameters.
+    """Shared vehicle parameters for kinematic and longitudinal models.
 
-    Values in DEFAULT_TEST_PARAMETERS are intentionally generic test assumptions,
-    not measured ARTTU data.
+    Kinematic parameters are kept compatible with the Phase 2A API while the
+    longitudinal parameters support the Phase 2B vehicle model.
+
+    DEFAULT_TEST_PARAMETERS uses generic assumptions and is not measured ARTTU data.
     """
 
-    mass_kg: float
-    wheel_radius_m: float
-    gear_ratio: float
-    drivetrain_efficiency: float
-    rolling_resistance_coeff: float
-    air_density_kg_m3: float
-    drag_coeff: float
-    frontal_area_m2: float
+    # Phase 2A kinematic parameters
+    wheelbase: float = 1.6
+    max_steering_angle: float = math.radians(30.0)
+
+    # Phase 2B longitudinal parameters
+    mass_kg: float = 250.0
+    wheel_radius_m: float = 0.23
+    gear_ratio: float = 4.5
+    drivetrain_efficiency: float = 0.95
+    rolling_resistance_coeff: float = 0.015
+    air_density_kg_m3: float = 1.225
+    drag_coeff: float = 0.9
+    frontal_area_m2: float = 1.2
     road_grade_rad: float = 0.0
 
     def validate(self) -> None:
+        if self.wheelbase <= 0:
+            raise ValueError("wheelbase must be > 0")
+        if self.max_steering_angle < 0:
+            raise ValueError("max_steering_angle must be >= 0")
         if self.mass_kg <= 0:
             raise ValueError("mass_kg must be > 0")
         if self.wheel_radius_m <= 0:
@@ -39,14 +50,5 @@ class VehicleParameters:
             raise ValueError("frontal_area_m2 must be >= 0")
 
 
-# TEMPORARY_TEST_ONLY: generic values used only to exercise the model.
-DEFAULT_TEST_PARAMETERS = VehicleParameters(
-    mass_kg=250.0,
-    wheel_radius_m=0.23,
-    gear_ratio=4.5,
-    drivetrain_efficiency=0.95,
-    rolling_resistance_coeff=0.015,
-    air_density_kg_m3=1.225,
-    drag_coeff=0.9,
-    frontal_area_m2=1.2,
-)
+# Generic values used only to exercise the model; not ARTTU measurements.
+DEFAULT_TEST_PARAMETERS = VehicleParameters()
