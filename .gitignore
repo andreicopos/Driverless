@@ -1,0 +1,100 @@
+# =========================
+# Python ==================
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+envs/
+ENV/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+pip-wheel-metadata/
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Type checking / linters
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
+
+# =========================
+# IDE / Editors ============
+# =========================
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# =========================
+# OS ======================
+# =========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# =========================
+# Simulation / generated ===
+# =========================
+# Keep source code, configuration and documentation in Git.
+# Ignore generated plots, logs and simulation exports.
+analysis/generated/
+analysis/outputs/
+*.log
+*.tmp
+
+# =========================
+# MATLAB ==================
+# =========================
+# MATLAB autosave / generated files
+*.asv
+*.m~
+*.autosave
+
+# Simulink generated files
+slprj/
+*.slxc
+*.sldd~
+
+# MATLAB code generation / build output
+codegen/
+
+# =========================
+# Local data ==============
+# =========================
+# Do not commit local telemetry or large raw datasets by default.
+data/raw/
+data/local/
+*.bag
+*.blf
+*.mf4
+*.mat
+
+# =========================
+# Secrets =================
+# =========================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
