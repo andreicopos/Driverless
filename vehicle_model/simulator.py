@@ -1,25 +1,45 @@
-from .state import VehicleState
-from .command import VehicleCommand
-from .kinematic_bicycle import KinematicBicycle
+from dataclasses import dataclass
+
+from .drivetrain import MotorCommand, MotorLimits
+from .longitudinal_dynamics import LongitudinalOutput, LongitudinalState, model_step
+from .parameters import VehicleParameters
 
 
-class Simulator:
+@dataclass(frozen=True)
+class SimulationLog:
+    time_s: list[float]
+    position_m: list[float]
+    velocity_mps: list[float]
+    acceleration_mps2: list[float]
+    force_n: list[float]
 
-    def __init__(
-        self,
-        model: KinematicBicycle,
-        state: VehicleState,
-        dt: float,
-    ):
-        self.model = model
-        self.state = state
-        self.dt = dt
 
-    def step(self, command: VehicleCommand) -> VehicleState:
-        self.state = self.model.step(
-            self.state,
-            command,
-            self.dt,
-        )
+def simulate(
+    initial_state: LongitudinalState,
+    commands: list[MotorCommand],
+    dt_s: float,
+    params: VehicleParameters,
+    limits: MotorLimits | None = None,
+) -> SimulationLog:
+    state = initial_state
+    time = [0.0]
+    positions = [state.position_m]
+    velocities = [state.velocity_mps]
+    accelerations = [0.0]
+    forces = [0.0]
 
-        return self.state
+    for i, command in enumerate(commands, start=1):
+        state, output = model_step(state, command, dt_s, params, limits)
+        time.append(i * dt_s)
+        positions.append(state.position_m)
+        velocities.append(state.velocity_mps)
+        accelerations.append(output.acceleration_mps2)
+        forces.append(output.forces.net_force_n)
+
+    return SimulationLog(
+        time_s=time,
+        position_m=positions,
+        velocity_mps=velocities,
+        acceleration_mps2=accelerations,
+        force_n=forces,
+    )
